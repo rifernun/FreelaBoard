@@ -24,7 +24,7 @@ function auth(req, res, next) {
       } else {
         req.token = token;
         req.loggedUser = { id: data.id, email: data.email };
-        next(); //tudo autorizado aqui
+        next();
       }
     });
   } else {
@@ -34,10 +34,10 @@ function auth(req, res, next) {
 }
 
 app.post("/signin", (req, res) => {
-  let { email, password, username } = req.body;
+  let { email, password } = req.body;
 
-  if (email || password || username !== undefined || null) {
-    DB.where(email)
+  if (email) {
+    DB.where({ email: email })
       .table("user")
       .then((data) => {
         if (data) {
@@ -70,7 +70,7 @@ app.post("/signup", async (req, res) => {
   let { email, password, username } = req.body;
 
   if ((email && password && username !== undefined) || null) {
-    const salt = bcrypt.genSalt(10);
+    const salt = bcrypt.genSaltSync(10);
     const hashPassword = bcrypt.hashSync(password, salt);
     const data = {
       email,
